@@ -1,22 +1,28 @@
 import { Router } from "express";
-import {
-     createService,
-      deleteService,
-       getAllServices,
-        getServiceById,
-         updateService
-         } from "../controller/service.controller.js";
-
-
+import { createService, deleteService, getAllServices, getServiceById, updateService } from '../controller/service.controller.js';
+import { upload } from '../middleware/multer.middleware.js';
 
 
 const router = Router()
 
-router.route("/create").post(createService);
-router.route("/getAllServices").get(getAllServices)
-router.route("/get/:id").get(getServiceById)
-router.route("/update/:id").put(updateService)
-router.route("/delete/:id").delete(deleteService)
+// Updated route handling (service.routes.js)
+router.post('/Create', upload.single('coverImage'), createService);
+
+
+
+// Additional  routes
+
+router.route("/getAllService").get(getAllServices);
+router.route("/createService").get(createService);
+
+//  /:id    requred  then  hit 
+
+router.route("/getServiceById/:id").get(getServiceById); //     /:Id
+router.route("/updateService/:id").put(updateService);    //    /:Id
+router.route("/deleteService/:id").delete(deleteService);  //   /:Id
+
+
+
 
 
 export default router;

@@ -1,7 +1,8 @@
 import { v2 as cloudinary } from 'cloudinary'
 import fs from 'fs'
+import dotenv from 'dotenv'
 
-
+dotenv.config()  
 // log environment variable for debugging 
 
 console.log("Cloudinary Env Variables:", {

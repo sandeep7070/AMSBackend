@@ -1,1 +1,1 @@
-export const DB_NAME = "LMS(Learning Management System)"
+export const DB_NAME = "LMS"
