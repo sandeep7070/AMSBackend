@@ -13,7 +13,7 @@ const courseSchema = new Schema (
         courseCode: {
             type: String,
             requred: true,
-            unique: false
+            
         },
         courseDuration: {
             type: String,
@@ -25,7 +25,6 @@ const courseSchema = new Schema (
         },
         active: {
             type: Boolean,
-            default: true
         },
         feesDiscount: {
             type: Number,
@@ -37,9 +36,8 @@ const courseSchema = new Schema (
             type: Number,
             requred: true
         },
-        courseImage: {
-            type: String,
-            requred: true
+        coverImage: {
+            type: String,  // clodinary
         },
         domain: {
             type: String,
@@ -47,15 +45,18 @@ const courseSchema = new Schema (
         },
         courseCurriculum: {
             type: String,
-            required: true
+            required: false
         },
         eligibilityCriteria: {
             type: String,
-            requred: true
+            requred: false
         },
 
 },  {
     timestamps: true
 })
 
-export const Course = mongoose.model("Course", courseSchema)
+ const Course = mongoose.model("Course", courseSchema)
+
+  export default  Course;
+
