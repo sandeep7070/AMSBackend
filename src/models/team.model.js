@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const teamSchema = new mongoose.Schema({
 
-    avatar: {
+    avtar: {
         type: String,  
     },
     name: {
@@ -21,4 +21,6 @@ const teamSchema = new mongoose.Schema({
      timestamps: true
 })
 
-export const Team = mongoose.model("Team", teamSchema)
+ const Team = mongoose.model("Team", teamSchema)
+ 
+ export default Team;

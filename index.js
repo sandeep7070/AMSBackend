@@ -24,12 +24,13 @@ app.use(cookieParser());
 /// import routes 
 import serviceRouter from './src/routes/service.routes.js'
 import courseRouter from './src/routes/course.routes.js'
-
+import teamRouter from './src/routes/team.routes.js'
 
 
 // Route Setup  User API 
 app.use("/api/v1", serviceRouter);
-app.use("/api/v1", courseRouter)
+app.use("/api/v1/course", courseRouter)
+app.use("/api/v1/team", teamRouter)
 
 
 

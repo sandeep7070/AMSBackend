@@ -1,7 +1,7 @@
-// course.controller.js
 import asyncHandler from '../utility/asyncHandlers.js'
 import Course from '../models/course.model.js'
 import { uploadOnCloudinary } from '../utility/cloudinary.js'
+import { error } from 'console';
 
 const createCourse = asyncHandler(async (req, res) => {
     console.log("Course Api hit ");
@@ -14,7 +14,7 @@ const createCourse = asyncHandler(async (req, res) => {
         courseCode, 
         courseDuration, 
         courseFees, 
-        active = false, 
+        active , 
         feesDiscount = 0, 
         minFeesToPay, 
         domain, 
@@ -41,10 +41,23 @@ const createCourse = asyncHandler(async (req, res) => {
         });
     }
 
+    let mycloud;
     try {
-        // Upload file to Cloudinary
-        const mycloud = await uploadOnCloudinary(file.path);
-        
+        mycloud = await uploadOnCloudinary(file)
+    } catch (cloudinaryError) {
+        console.error('Cloudinary not upload', cloudinaryError);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to upload image to Cloudinary",
+            error: cloudinaryError.message
+        })
+    }
+
+    console.log(mycloud)
+
+    try {
+        mycloud = await uploadOnCloudinary(file)
+
         // Create new course
         const newCourse = await Course.create({
             coursetitle,
@@ -63,17 +76,30 @@ const createCourse = asyncHandler(async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: "Course created successfully!",
-            course: newCourse
-        });                                               
+            message: "Service created successfully!!",
+            Course: {
+                coursetitle: newCourse.coursetitle,
+                coursesubject: newCourse.coursesubject,
+                courseCode: newCourse.courseCode,
+                courseDuration: newCourse.courseDuration,
+                courseFees: newCourse.courseFees,
+                active: newCourse.active,
+                feesDiscount: newCourse.feesDiscount,
+                minFeesToPay: newCourse.minFeesToPay,
+                domain: newCourse.minFeesToPay,
+                courseCurriculum: newCourse.courseCurriculum,
+                eligibilityCriteria: newCourse.eligibilityCriteria,
+                coverImage: newCourse.coverImage
+            }
+        });
     } catch (error) {
-        console.error("Course creation error", error);
+        console.error("Course creation error:", error);
         res.status(500).json({
             success: false,
             message: "Error creating course",
             error: error.message
         });
     }
-});
+});    
 
 export { createCourse };
