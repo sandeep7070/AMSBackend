@@ -12,9 +12,16 @@ const PORT = process.env.PORT || 8080;
 
 // Middleware manage 
 app.use(cors({
-  origin: process.env.CORS_ORIGIN,
-  credentials: true
-}));
+  origin: [
+    process.env.CORS_ORIGIN, 
+ 'http://localhost:5173',
+
+    'http://localhost:5174'
+     // Your local development client
+  ],
+  credentials: true // Important for handling cookies across origins
+}))
+
 
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
