@@ -1,6 +1,6 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const blogSchema = new Schema(
+const blogSchema = new mongoose.Schema(
     {
      name: {
         type: String,
@@ -12,13 +12,12 @@ const blogSchema = new Schema(
      },
      status: {
         type: String,
-        enum: ['draff', 'published', 'archived'],
-        default: draff
+      
      },
-     date: {
-        type: Date,
-        default: Date.now
-     },
+   //   date: {
+   //      type: Date,
+   //      default: Date.now
+   //   },
      view: {
         type: Number,
         default: 0
@@ -31,9 +30,9 @@ const blogSchema = new Schema(
         type: String,
         required: true
      },
-     blogImage: {
+     coverImage: {
         type: String,
-        required: true
+        
      },
      content: {
         type: String,
@@ -44,4 +43,6 @@ const blogSchema = new Schema(
     timestamps: true
 });
 
-export const Blog = mongoose.model('Blog', blogSchema);
+ const Blog = mongoose.model('Blog', blogSchema);
+
+ export default Blog;

@@ -6,8 +6,6 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'public/temp'); // Ensure this directory exists
   }, 
-
-
   
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -17,11 +15,11 @@ const storage = multer.diskStorage({
 
 // File filter to validate file types
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp', 'image/tiff'];
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Invalid file type. Only JPEG, PNG, and GIF are allowed.'), false);
+    cb(new Error('Invalid file type. Only JPEG, PNG, WebP, BMP, TIFF, and GIF are allowed.'), false);
   }
 };
 
