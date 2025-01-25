@@ -8,14 +8,11 @@ const router = Router()
 // Updated route handling (service.routes.js)
 router.post('/Create', upload.single('coverImage'), createService);
 
-
-
-// Additional  routes
+// Additional  routes   
 
 router.route("/getAllService").get(getAllServices);
-router.route("/createService").get(createService);
 
-//  /:id    requred  then  hit 
+//  /:id  requred  then  hit 
 
 router.route("/getServiceById/:id").get(getServiceById); //     /:Id
 router.route("/updateService/:id").put(updateService);    //    /:Id

@@ -1,32 +1,27 @@
 import asyncHandler from '../utility/asyncHandlers.js'
 import Course from '../models/course.model.js'
 import { uploadOnCloudinary } from '../utility/cloudinary.js'
-import { error } from 'console';
 
+// Create Course 
 const createCourse = asyncHandler(async (req, res) => {
-    console.log("Course Api hit ");
-    console.log("Request Body:", req.body);
-    console.log("Request File:", req.file);
-
     const { 
-        coursetitle, 
-        coursesubject, 
+        title, 
+        subject, 
         courseCode, 
-        courseDuration, 
+        duration, 
         courseFees, 
-        active , 
-        feesDiscount = 0, 
+        discountendfees,
         minFeesToPay, 
         domain, 
-        courseCurriculum, 
+        curriculum, 
         eligibilityCriteria
     } = req.body;
         
     const file = req.file;
 
     // Validate required fields
-    if (!coursetitle || !coursesubject || !courseCode || !courseDuration || 
-        !courseFees || !minFeesToPay || !domain) {
+    if (!title || !subject || !courseCode || !duration || !courseFees || !discountendfees ||
+         !minFeesToPay || !domain || !curriculum || !eligibilityCriteria) {
         return res.status(400).json({
             success: false,
             message: "Missing required course details"
@@ -41,53 +36,38 @@ const createCourse = asyncHandler(async (req, res) => {
         });
     }
 
-    let mycloud;
     try {
-        mycloud = await uploadOnCloudinary(file)
-    } catch (cloudinaryError) {
-        console.error('Cloudinary not upload', cloudinaryError);
-        return res.status(500).json({
-            success: false,
-            message: "Failed to upload image to Cloudinary",
-            error: cloudinaryError.message
-        })
-    }
-
-    console.log(mycloud)
-
-    try {
-        mycloud = await uploadOnCloudinary(file)
+        // Upload to Cloudinary
+        const cloudinaryResponse = await uploadOnCloudinary(file);
 
         // Create new course
         const newCourse = await Course.create({
-            coursetitle,
-            coursesubject,
+            title,
+            subject,
             courseCode,
-            courseDuration,
+            duration,
             courseFees,
-            active,
-            feesDiscount,
+            discountendfees,
             minFeesToPay,
             domain,
-            courseCurriculum,
+            curriculum,
             eligibilityCriteria,
-            coverImage: mycloud?.url || '',
+            coverImage: cloudinaryResponse?.url || '',
         });
 
         res.status(201).json({
             success: true,
-            message: "Service created successfully!!",
+            message: "Course created successfully!!",
             Course: {
-                coursetitle: newCourse.coursetitle,
-                coursesubject: newCourse.coursesubject,
+                title: newCourse.title,
+                subject: newCourse.subject,
                 courseCode: newCourse.courseCode,
-                courseDuration: newCourse.courseDuration,
+                duration: newCourse.duration,
                 courseFees: newCourse.courseFees,
-                active: newCourse.active,
-                feesDiscount: newCourse.feesDiscount,
+                discountendfees: newCourse.discountendfees,
                 minFeesToPay: newCourse.minFeesToPay,
-                domain: newCourse.minFeesToPay,
-                courseCurriculum: newCourse.courseCurriculum,
+                domain: newCourse.domain,
+                curriculum: newCourse.curriculum,
                 eligibilityCriteria: newCourse.eligibilityCriteria,
                 coverImage: newCourse.coverImage
             }
@@ -100,8 +80,167 @@ const createCourse = asyncHandler(async (req, res) => {
             error: error.message
         });
     }
-});    
+});
 
-export { createCourse };
+// Get All Courses
+const getAllCourse = asyncHandler(async (req, res) => {
+    try {
+        const { 
+            page = 1, 
+            limit = 10, 
+            subject, 
+            domain,
+            sortBy = 'createdAt',
+            sortOrder = 'desc' 
+        } = req.query;
 
-///  not complete 
+        // Build query filter
+        const filter = {};
+        if (subject) filter.subject = subject;
+        if (domain) filter.domain = domain;
+
+        // Sorting
+        const sort = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
+
+        // Pagination
+        const skip = (page - 1) * limit;
+
+        // Fetch courses
+        const courses = await Course.find(filter)
+            .sort(sort)
+            .skip(skip)
+            .limit(Number(limit));
+
+        // Total courses for pagination
+        const total = await Course.countDocuments(filter);
+
+        res.status(200).json({
+            success: true,
+            message: "Courses retrieved successfully",
+            pagination: {
+                totalCourses: total,
+                currentPage: page,
+                totalPages: Math.ceil(total / limit),
+                coursesPerPage: courses.length
+            },
+            courses
+        });
+    } catch (error) {
+        console.error("Error retrieving courses:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error retrieving courses",
+            error: error.message
+        });
+    }
+});
+
+// Get Single Course by ID
+const getSingleCourse = asyncHandler(async (req, res) => {
+    try {
+        const course = await Course.findById(req.params.id);
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: "Course not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Course retrieved successfully",
+            course
+        });
+    } catch (error) {
+        console.error("Error retrieving course:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error retrieving course",
+            error: error.message
+        });
+    }
+});
+
+// Update Course
+const updateCourse = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const updateData = req.body;
+    const file = req.file;
+
+    try {
+        // Find existing course
+        const existingCourse = await Course.findById(id);
+
+        if (!existingCourse) {
+            return res.status(404).json({
+                success: false,
+                message: "Course not found"
+            });
+        }
+
+        // Handle file upload if new image provided
+        if (file) {
+            const cloudinaryResponse = await uploadOnCloudinary(file);
+            updateData.coverImage = cloudinaryResponse?.url || existingCourse.coverImage;
+        }
+
+        // Update course
+        const updatedCourse = await Course.findByIdAndUpdate(
+            id, 
+            updateData, 
+            { new: true, runValidators: true }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Course updated successfully",
+            course: updatedCourse
+        });
+    } catch (error) {
+        console.error("Course update error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error updating course",
+            error: error.message
+        });
+    }
+});
+
+// Delete Course
+const deleteCourse = asyncHandler(async (req, res) => {
+    try {
+        const course = await Course.findByIdAndDelete(req.params.id);
+
+        if (!course) {
+            return res.status(404).json({
+                success: false,
+                message: "Course not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Course deleted successfully",
+            deletedCourse: {
+                id: course._id,
+                title: course.title
+            }
+        });
+    } catch (error) {
+        console.error("Course deletion error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error deleting course",
+            error: error.message
+        });
+    }
+});
+
+export { 
+    createCourse, 
+    getAllCourse, 
+    getSingleCourse, 
+    updateCourse, 
+    deleteCourse 
+};

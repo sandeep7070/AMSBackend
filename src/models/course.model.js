@@ -2,20 +2,19 @@ import mongoose from "mongoose";
 
 const courseSchema = new mongoose.Schema (
     {
-        coursetitle: {
+        title: {
             type: String,
             required: true
         },
-        coursesubject: {
+        subject: {
             type: String,
             requred: true
         },
         courseCode: {
             type: String,
-            requred: true,
             
         },
-        courseDuration: {
+        duration: {
             type: String,
             required: true
         },
@@ -23,12 +22,9 @@ const courseSchema = new mongoose.Schema (
             type: Number,
             required: true
         },
-        active: {
-            type: Boolean,
-        },
-        feesDiscount: {
+        
+        discountendfees: {
             type: Number,
-            default: 0,
             min: 0,
             max: 200
         },
@@ -43,7 +39,7 @@ const courseSchema = new mongoose.Schema (
             type: String,
             required: true
         },
-        courseCurriculum: {
+        curriculum: {
             type: String,
             required: false
         },

@@ -18,19 +18,35 @@ cloudinary.config({
 })
 
 
-const uploadOnCloudinary = async (loacalFildPath) => {
+const uploadOnCloudinary = async (file) => {
     try {
-         if (!loacalFildPath) return null
-         const response = await cloudinary.uploader.upload(loacalFildPath, {
+        // Extract the local file path from the Multer file object
+        const localFilePath = file.path;
+
+        if (!localFilePath) return null;
+
+        // Upload to Cloudinary
+        const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "auto"
-         });
-         // file upload seccefull !!! 
-         console.log("file is upload cloudinary", response.url);
-         return response.url
+        });
+
+        // Remove local file after successful upload
+        fs.unlinkSync(localFilePath);
+
+        return response;
     } catch (error) {
-        fs.unlinkSync(loacalFildPath)
-        return null
+        // If upload fails, try to remove the local file
+        if (file.path) {
+            try {
+                fs.unlinkSync(file.path);
+            } catch (unlinkError) {
+                console.error('Error removing local file:', unlinkError);
+            }
+        }
+        console.error('Cloudinary upload error:', error);
+        return null;
     }
+
 }
 
 export { uploadOnCloudinary }
