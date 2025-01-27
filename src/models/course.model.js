@@ -26,7 +26,7 @@ const courseSchema = new mongoose.Schema (
         discountendfees: {
             type: Number,
             min: 0,
-            max: 200
+            max: 500
         },
         minFeesToPay: {
             type: Number,
