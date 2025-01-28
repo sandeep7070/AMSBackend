@@ -33,14 +33,18 @@ import serviceRouter from './src/routes/service.routes.js'
 import courseRouter from './src/routes/course.routes.js'
 import teamRouter from './src/routes/team.routes.js'
 import blogRouter  from './src/routes/blog.routes.js'
+import testimonialRouter from './src/routes/testimonials.routes.js'
 
 // Route Setup  User API 
 app.use("/api/v1", serviceRouter);
 app.use("/api/v1/course", courseRouter)
 app.use("/api/v1/team", teamRouter)
 app.use("/api/v1/blog", blogRouter)
+app.use("/api/v1/testimonials",testimonialRouter)
 
-
+app.get('/',(req,res)=>{
+  res.send('Welcome to our API')
+})
 
 // Database connection  servic manage 
 connectDB()
