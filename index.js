@@ -16,8 +16,9 @@ app.use(cors({
     process.env.CORS_ORIGIN, 
  'http://localhost:5173',
 
-    'http://localhost:5174'
+    'http://localhost:5174',
      // Your local development client
+     'http://localhost:5173/'
   ],
   credentials: true // Important for handling cookies across origins
 }))
@@ -33,12 +34,16 @@ import serviceRouter from './src/routes/service.routes.js'
 import courseRouter from './src/routes/course.routes.js'
 import teamRouter from './src/routes/team.routes.js'
 import blogRouter  from './src/routes/blog.routes.js'
+import authRouter from "./src/routes/auth.routes.js"
+
 
 // Route Setup  User API 
 app.use("/api/v1", serviceRouter);
 app.use("/api/v1/course", courseRouter)
 app.use("/api/v1/team", teamRouter)
 app.use("/api/v1/blog", blogRouter)
+app.use("/api/auth",authRouter)
+
 
 
 
