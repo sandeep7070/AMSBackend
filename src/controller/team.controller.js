@@ -22,13 +22,13 @@ const createTeam = asyncHandler(async (req, res) => {
     }
 
     try {
-        const mycloud = await uploadOnCloudinary(file.path);
+        const cloudinaryResponse = await uploadOnCloudinary(file);
         
         const newTeam = await Team.create({
             name,
             designation,
             yearOfExperience,
-            coverImage: mycloud?.url || '',
+            coverImage: cloudinaryResponse?.url || '',
         });
 
         res.status(201).json({

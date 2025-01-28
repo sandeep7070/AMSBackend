@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const teamSchema = new mongoose.Schema({
 
-    avtar: {
-        type: String,  
+    coverImage: {
+        type: String,    // cloudinary 
     },
     name: {
         type: String,

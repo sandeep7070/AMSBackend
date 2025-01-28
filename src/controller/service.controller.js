@@ -5,6 +5,7 @@ import fs from 'fs';
 
 const createService = asyncHandler(async (req, res) => {
     const { title, description } = req.body;
+
     const file = req.file;
 
     if (!title || !description) {
@@ -22,12 +23,12 @@ const createService = asyncHandler(async (req, res) => {
     }
 
     try {
-        const mycloud = await uploadOnCloudinary(file.path);
+        const cloudinaryResponse = await uploadOnCloudinary(file);
         
         const newServices = await Services.create({
             title,
             description,
-            coverImage: mycloud?.url || '',
+            coverImage: cloudinaryResponse?.url || '',
         });
 
         res.status(201).json({
