@@ -35,9 +35,8 @@ import courseRouter from './src/routes/course.routes.js'
 import teamRouter from './src/routes/team.routes.js'
 import blogRouter  from './src/routes/blog.routes.js'
 import authRouter from "./src/routes/auth.routes.js"
-
-
 import testimonialRouter from './src/routes/testimonials.routes.js'
+import expenseRouter from './src/routes/expense.routes.js'
 
 // Route Setup  User API 
 app.use("/api/v1", serviceRouter);
@@ -48,6 +47,7 @@ app.use("/api/auth",authRouter)
 
 
 app.use("/api/v1/testimonials",testimonialRouter)
+app.use("/api/v1/expense",expenseRouter)
 
 app.get('/',(req,res)=>{
   res.send('Welcome to our API')

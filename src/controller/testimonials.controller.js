@@ -57,7 +57,7 @@ export const deleteTestimonial = async(req,res)=>{
     if(!deletedTestimonial){
       return res.status(404).json({ message: "testimonial not found", success:false });
       }
-      res.status(200).json({ message: "testimonial deleted successfully", success:true})
+      res.status(200).json({ message: "testimonial deleted successfully", success:true,data:deletedTestimonial._id})
   } catch (error) {
     res.status(500).json({ message: error.message, success:false });
   }
