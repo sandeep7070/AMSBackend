@@ -35,8 +35,7 @@ import courseRouter from './src/routes/course.routes.js'
 import teamRouter from './src/routes/team.routes.js'
 import blogRouter  from './src/routes/blog.routes.js'
 import authRouter from "./src/routes/auth.routes.js"
-
-
+import studentRouter from "./src/routes/student.routes.js"
 import testimonialRouter from './src/routes/testimonials.routes.js'
 
 // Route Setup  User API 
@@ -45,6 +44,7 @@ app.use("/api/v1/course", courseRouter)
 app.use("/api/v1/team", teamRouter)
 app.use("/api/v1/blog", blogRouter)
 app.use("/api/auth",authRouter)
+app.use("/api/students", studentRouter);
 
 
 app.use("/api/v1/testimonials",testimonialRouter)
