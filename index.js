@@ -10,19 +10,21 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // Middleware manage
-app.use(
-  cors({
-    origin: [
-      process.env.CORS_ORIGIN,
-      "http://localhost:5173",
+// app.use(
+//   cors({
+//     origin: [
+//       process.env.CORS_ORIGIN,
+//       "http://localhost:5173",
 
-      "http://localhost:5174",
-      // Your local development client
-      "http://localhost:5173/",
-    ],
-    credentials: true, // Important for handling cookies across origins
-  })
-);
+//       "http://localhost:5174",
+//       // Your local development client
+//       "http://localhost:5173/",
+//     ],
+//     credentials: true, // Important for handling cookies across origins
+//   })
+// );
+
+app.use(cors());
 
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
