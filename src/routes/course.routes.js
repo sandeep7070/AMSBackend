@@ -15,7 +15,8 @@ router.route("/getAllCourse").get(getAllCourse);
 //  /:id  requred  then  hit 
 
 router.route("/getSingleCourse/:id").get(getSingleCourse); //     /:Id
-router.route("/updateCourse/:id").put(updateCourse);    //    /:Id
+router.put('/updateCourse/:id',upload.single('coverImage'),updateCourse)
+// router.route("/updateCourse/:id").put(updateCourse);    //    /:Id
 router.route("/deleteCourse/:id").delete(deleteCourse);  //   /:Id
 
 
