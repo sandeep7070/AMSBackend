@@ -1,6 +1,7 @@
 import asyncHandler from '../utility/asyncHandlers.js'
 import Course from '../models/course.model.js'
 import { uploadOnCloudinary } from '../utility/cloudinary.js'
+import mongoose from 'mongoose'
 
 // Create Course 
 const createCourse = asyncHandler(async (req, res) => {
@@ -166,46 +167,33 @@ const getSingleCourse = asyncHandler(async (req, res) => {
 const updateCourse = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
-    const file = req.file;
 
     try {
-        // Find existing course
-        const existingCourse = await Course.findById(id);
-
-        if (!existingCourse) {
-            return res.status(404).json({
-                success: false,
-                message: "Course not found"
-            });
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "Invalid course ID" });
         }
 
-        // Handle file upload if new image provided
-        if (file) {
-            const cloudinaryResponse = await uploadOnCloudinary(file);
-            updateData.coverImage = cloudinaryResponse?.url || existingCourse.coverImage;
+        const course = await Course.findById(id);
+        if (!course) {
+            return res.status(404).json({ success: false, message: "Course not found" });
+        }
+
+        // Handle file upload
+        if (req.file) {
+            const cloudinaryResponse = await uploadOnCloudinary(req.file);
+            updateData.coverImage = cloudinaryResponse?.url || course.coverImage;
         }
 
         // Update course
-        const updatedCourse = await Course.findByIdAndUpdate(
-            id, 
-            updateData, 
-            { new: true, runValidators: true }
-        );
+        const updatedCourse = await Course.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
 
-        res.status(200).json({
-            success: true,
-            message: "Course updated successfully",
-            course: updatedCourse
-        });
+        res.status(200).json({ success: true, message: "Course updated successfully", course: updatedCourse });
     } catch (error) {
-        console.error("Course update error:", error);
-        res.status(500).json({
-            success: false,
-            message: "Error updating course",
-            error: error.message
-        });
+        res.status(500).json({ success: false, message: "Error updating course", error: error.message });
     }
 });
+
 
 // Delete Course
 const deleteCourse = asyncHandler(async (req, res) => {

@@ -8,7 +8,7 @@ const courseSchema = new mongoose.Schema (
         },
         subject: {
             type: String,
-            requred: true
+            required: true
         },
         courseCode: {
             type: String,
@@ -30,10 +30,10 @@ const courseSchema = new mongoose.Schema (
         },
         minFeesToPay: {
             type: Number,
-            requred: true
+            required: true
         },
         coverImage: {
-            type: String,  // clodinary
+            type: String,  // cloudinary
         },
         domain: {
             type: String,
@@ -41,11 +41,9 @@ const courseSchema = new mongoose.Schema (
         },
         curriculum: {
             type: String,
-            required: false
         },
         eligibilityCriteria: {
             type: String,
-            requred: false
         },
 
 },  {
