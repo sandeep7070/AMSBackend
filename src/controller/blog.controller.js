@@ -151,7 +151,7 @@ const updateBlog = asyncHandler(async (req, res) => {
             }
 
             // Upload new image
-            cloudinaryResult = await uploadOnCloudinary(file.path);
+            cloudinaryResult = await uploadOnCloudinary(file);
         }
 
         // Update blog details
@@ -214,7 +214,8 @@ const deleteBlog = asyncHandler(async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: "Blog deleted successfully"
+            message: "Blog deleted successfully",
+            blog : blog
         });
     } catch (error) {
         console.error("Error deleting blog", error);
