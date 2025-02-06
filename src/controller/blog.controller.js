@@ -23,7 +23,7 @@ const createBlog = asyncHandler(async (req, res) => {
     }
 
     try {
-        const mycloud = await uploadOnCloudinary(file.path);
+        const mycloud = await uploadOnCloudinary(file);
         
         const newBlog = await Blog.create({
             category,
