@@ -8,7 +8,7 @@ const createBlog = asyncHandler(async (req, res) => {
     const { name, category, status, date, view, title, description, content } = req.body;
     const file = req.file;
 
-    if (!name || !category || !status || !view || !title || !description || !content) {
+    if (!category || !title || !description || !content) {
         return res.status(400).json({
             success: false,
             message: "Missing blog details"
@@ -26,10 +26,7 @@ const createBlog = asyncHandler(async (req, res) => {
         const mycloud = await uploadOnCloudinary(file.path);
         
         const newBlog = await Blog.create({
-            name,
             category,
-            status,
-            view, 
             title,
             description,
             content,
@@ -111,7 +108,6 @@ const getBlogById = asyncHandler(async (req, res) => {
         }
 
         // Increment view count
-        blog.view += 1;
         await blog.save();
 
         res.status(200).json({
@@ -132,7 +128,7 @@ const getBlogById = asyncHandler(async (req, res) => {
 // Update a blog
 const updateBlog = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { name, category, status, view, title, description, content } = req.body;
+    const {  category,  title, description, content } = req.body;
     const file = req.file;
 
     try {
@@ -160,10 +156,7 @@ const updateBlog = asyncHandler(async (req, res) => {
 
         // Update blog details
         const updateData = {
-            name: name || existingBlog.name,
             category: category || existingBlog.category,
-            status: status || existingBlog.status,
-            view: view || existingBlog.view,
             title: title || existingBlog.title,
             description: description || existingBlog.description,
             content: content || existingBlog.content,
