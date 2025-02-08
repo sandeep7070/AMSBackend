@@ -4,17 +4,30 @@ import { uploadOnCloudinary } from "../utility/cloudinary.js";
 // Add a new company profile
 export const addAbout = async (req, res) => {
   try {
-    const { companyName, tagline, socialLinks, ourStory, ourMission } = req.body;
+    const { companyName, tagline, ourStory, ourMission } = req.body;
     const file = req.file;
 
+    // Validate required fields
     if (!companyName || !tagline || !ourStory || !ourMission) {
       return res.status(400).json({ error: "All fields are required" });
     }
-    if(!file){
-        return res.status(400).json({ error: "Cover image is required" });
+    if (!file) {
+      return res.status(400).json({ error: "Cover image is required" });
     }
+
+    // Construct socialLinks object from individual fields
+    const socialLinks = {
+      facebook: req.body.facebook,
+      twitter: req.body.twitter,
+      linkedin: req.body.linkedin,
+      instagram: req.body.instagram,
+    };
+
+    // Upload cover image to Cloudinary
     const cloudinaryResponse = await uploadOnCloudinary(file);
-    const coverImage = cloudinaryResponse?.url || ''
+    const coverImage = cloudinaryResponse?.url || '';
+
+    // Create new About document
     const newAbout = await new About({
       companyName,
       tagline,
@@ -22,12 +35,12 @@ export const addAbout = async (req, res) => {
       socialLinks,
       ourStory,
       ourMission,
-      coverImage
     });
 
     await newAbout.save();
     res.status(201).json({ message: "Company profile added successfully", about: newAbout });
   } catch (error) {
+    console.error("Error adding company profile:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
