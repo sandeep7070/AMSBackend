@@ -42,6 +42,7 @@ import testimonialRouter from "./src/routes/testimonials.routes.js";
 import expenseRouter from "./src/routes/expense.routes.js";
 import jobRouter from "./src/routes/job.routes.js";
 import galleryRouter from './src/routes/gallery.routes.js'
+import aboutRouter from './src/routes/about.routes.js'
 
 // Route Setup  User API
 app.use("/api/v1", serviceRouter);
@@ -55,6 +56,7 @@ app.use("/api/v1/job", jobRouter);
 app.use("/api/v1/testimonials", testimonialRouter);
 app.use("/api/v1/expense", expenseRouter);
 app.use("/api/v1/gallery", galleryRouter);
+app.use("/api/v1/about", aboutRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to our API");
