@@ -1,5 +1,7 @@
 import Staff from '../models/staff.model.js';
+import Admin from '../models/admin.model.js'
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs'
 
 // Account Creation
 export const createStaff = async (req, res) => {
@@ -140,3 +142,98 @@ export const deleteStaff = async (req, res) => {
     res.status(500).json({ message: 'Error deleting staff', error: error.message });
   }
 };
+
+// Admin Auth Controllers
+
+ 
+// Create JWT Token
+const createToken = (userId) => {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '2h' });
+};
+
+// Admin Signup Controller
+export const adminSignUp = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+    // Validate Input
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Please fill in all fields' });
+    }
+
+    // Check if Admin Already Exists
+    const existingUser = await Admin.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Admin already exists with this email' });
+    }
+
+    // Hash Password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create New Admin
+    const admin = new Admin({ name, email, password: hashedPassword });
+    await admin.save();
+
+    // Generate JWT Token
+    const token = createToken(admin._id);
+
+    // Set HTTP-Only Cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      // secure: 'develop', // Use secure cookies in production
+      sameSite: 'strict',
+      maxAge: 2 * 60 * 60 * 1000, // 2 hours
+    });
+
+    res.status(201).json({ message: 'Admin registered successfully', adminId: admin._id });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const adminLogin = async (req, res) => {
+  try {
+    const {email,password} = req.body;
+    const admin = await Admin.findOne({email});
+    if(!admin) return res.status(400).json({message: 'Admin not found'})
+      const isValidPassword = await bcrypt.compare(password, admin.password);
+    if(!isValidPassword) return res.status(400).json({message: 'Invalid password'})
+      const token = createToken(admin._id);
+    res.cookie('token', token, {
+      httpOnly: true,
+      // secure: 'develop', // Use secure cookies in production
+      sameSite: 'strict',
+      maxAge: 2 * 60 * 60 * 1000, // 2
+      });
+      res.status(200).json({message: 'Admin logged in successfully', adminId: admin})
+
+  } catch (error) {
+       res.status(500).json({ error: error.message });
+  }
+}
+
+export const checkAuth = async(req,res)=>{
+  try {
+    const token = req.cookies.token;
+    if(!token){
+      return res.status(401).json({message: 'Not authenticated'})
+    }
+    const decoded = jwt.verify(token,process.env.JWT_SECRET);
+    if (!decoded) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+    res.status(200).json({ message: "Authenticated" });
+  } catch (error) {
+    res.status(401).json({ message: "Not authenticated" });
+  }
+}
+
+export const adminLogout = async (req, res) => {
+  try {
+      res.clearCookie('token');
+      res.status(200).json({ message: 'Logged out successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
