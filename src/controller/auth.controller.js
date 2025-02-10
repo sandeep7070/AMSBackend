@@ -214,27 +214,27 @@ export const adminLogin = async (req, res) => {
   }
 }
 
-export const checkAuth = async(req,res)=>{
+export const checkAuth = async (req, res) => {
   try {
     const token = req.cookies.token;
-    if(!token){
-      return res.status(401).json({message: 'Not token found '})
-    }
-    const decoded = jwt.verify(token,'1234abcd');
-    if (!decoded) {
-      return res.status(401).json({ message: "Invalid token" });
-    }
-    res.status(200).json({ message: "Authenticated" });
-  } catch (error) {
-    res.status(401).json({ message: "Not authenticated" });
-  }
-}
 
-export const adminLogout = async (req, res) => {
-  try {
-      res.clearCookie('token');
-      res.status(200).json({ message: 'Logged out successfully' });
+    if (!token) {
+      return res.status(401).json({ isAuthenticated: false, message: "Not authenticated" });
+    }
+
+    const decoded = jwt.verify(token, "1234abcd");
+    if (!decoded) {
+      return res.status(401).json({ isAuthenticated: false, message: "Invalid token" });
+    }
+
+    res.status(200).json({ isAuthenticated: true, message: "Authenticated" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(401).json({ isAuthenticated: false, message: "Not authenticated" });
   }
-}
+};
+
+
+export const adminLogout = (req, res) => {
+  res.clearCookie("token", { path: "/", httpOnly: true, secure: true, sameSite: "None" });
+  res.status(200).json({ message: "Logged out successfully" });
+};
