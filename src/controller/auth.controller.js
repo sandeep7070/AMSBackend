@@ -202,10 +202,11 @@ export const adminLogin = async (req, res) => {
       const token = createToken(admin._id);
     res.cookie('token', token, {
       httpOnly: true,
-      // secure: 'develop', // Use secure cookies in production
-      sameSite: 'strict',
-      maxAge: 2 * 60 * 60 * 1000, // 2
-      });
+      secure: true, // Secure cookies in production
+      sameSite: 'none', // Allows cross-origin cookies
+      maxAge: 2 * 60 * 60 * 1000, // 2 hours
+  });
+  
       res.status(200).json({message: 'Admin logged in successfully', adminId: admin})
 
   } catch (error) {
@@ -217,7 +218,7 @@ export const checkAuth = async(req,res)=>{
   try {
     const token = req.cookies.token;
     if(!token){
-      return res.status(401).json({message: 'Not authenticated'})
+      return res.status(401).json({message: 'Not token found '})
     }
     const decoded = jwt.verify(token,'1234abcd');
     if (!decoded) {
